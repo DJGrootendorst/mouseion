@@ -28,7 +28,7 @@ public class PaintingController {
             // Vul de paintings lijst met alle paintings
             paintings = paintingRepository.findAll();
         } else {
-            // Vul de paintings lijst met alle paintings die een bepaalde title hebben
+            // Vul de paintingslijst met alle paintings die een bepaalde title hebben
             paintings = paintingRepository.findAllPaintingsByTitleEqualsIgnoreCase(title);
         }
 
@@ -38,7 +38,7 @@ public class PaintingController {
 
     // Return 1 painting met een specifiek id
     @GetMapping("/paintings/{id}")
-    public ResponseEntity<String> getPainting(@PathVariable("id") Long id) {
+    public ResponseEntity<Painting> getPainting(@PathVariable("id") Long id) {
 
         Optional<Painting> painting = paintingRepository.findById(id);
 
@@ -51,9 +51,10 @@ public class PaintingController {
         } else {
             // Als er wel een painting in de optional staat, dan halen we die uit de optional met de get-methode.
             Painting painting1 = painting.get();
+
+            // Return een String met een 200 status
+            return ResponseEntity.ok().body(painting1);
         }
-        // Return een String met een 200 status
-        return ResponseEntity.ok("painting " + id);
     }
 
     // Hier geef ik een painting mee in de parameter. Waarbij het JSON object exact overeen moet komen met het Painting object.
@@ -61,10 +62,10 @@ public class PaintingController {
     public ResponseEntity<Painting> addPainting(@RequestBody Painting painting) {
 
         // Sla de nieuwe painting in de database op met de save-methode van de repository
-        Painting returnPainting = paintingRepository.save(painting);
+        Painting savedPainting = paintingRepository.save(painting);
 
         // Return de gemaakte painting en een 201 status
-        return ResponseEntity.created(null).body(returnPainting);
+        return ResponseEntity.status(201).body(savedPainting);
     }
 
     @DeleteMapping("/paintings/{id}")
