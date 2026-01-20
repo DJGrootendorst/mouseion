@@ -1,25 +1,12 @@
-package com.dirkjg.mouseion.models;
+package com.dirkjg.mouseion.Dtos;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-
-import java.util.List;
-
-@Entity
-public class Painting {
-
-    @Id
-    @GeneratedValue
-    Long id;
-
-    // variabele declaraties, de variabele Painter en CharacteristicAspects moet nog worden gemaakt, dat doe ik zodra ik de relaties ga leggen
+public class PaintingDto {
+    private Long id;
     private String title;
     private Integer year;
-    // bij image wordt een url ingevuld
     private String image;
 
-    // Alle variable getters
+    // Getters
     public Long getId() {
         return id;
     }
@@ -36,7 +23,7 @@ public class Painting {
         return image;
     }
 
-    // Alle variabele setters
+    // Setters
     public void setId(Long id) {
         this.id = id;
     }
