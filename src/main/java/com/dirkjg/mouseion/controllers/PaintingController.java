@@ -1,15 +1,12 @@
 package com.dirkjg.mouseion.controllers;
 
-import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
-import com.dirkjg.mouseion.models.Painting;
-import com.dirkjg.mouseion.repositories.PaintingRepository;
 import com.dirkjg.mouseion.Dtos.PaintingDto;
+import com.dirkjg.mouseion.Dtos.PaintingInputDto;
 import com.dirkjg.mouseion.services.PaintingService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +21,14 @@ public class PaintingController {
 
     // Get all paintings
     @GetMapping("/paintings")
-    public ResponseEntity<List<PaintingDto>> getAllPaintings(@RequestParam(value = "title", required = false) Optional<String> title) {
+    public ResponseEntity<List<PaintingDto>> getAllPaintings(
+            @RequestParam(value = "title", required = false) Optional<String> title) {
 
         List<PaintingDto> dtos;
 
         if (title.isEmpty()){
+            dtos = paintingService.getAllPaintings();
+        } else {
             dtos = paintingService.getAllPaintingsByTitle(title.get());
         }
 
@@ -88,7 +88,7 @@ public class PaintingController {
         PaintingDto dto = paintingService.updatePartialPainting(id, newPainting);
 
         return ResponseEntity.ok().body(dto);
-    }
+   }
         // VERANTWOORDINGSDOCUMENT REFLECTIE 1:
         // In het model painting had ik eerst "private int year" staan. Maar een "int" kan niet null zijn, een "integer" kan dat wel.
         // "Year" was in "Painting" dus eerste gedefinieerd als een primitieve "int".

@@ -1,6 +1,7 @@
 package com.dirkjg.mouseion.services;
 
 import com.dirkjg.mouseion.Dtos.PaintingDto;
+import com.dirkjg.mouseion.Dtos.PaintingInputDto;
 import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
 import com.dirkjg.mouseion.models.Painting;
 import com.dirkjg.mouseion.repositories.PaintingRepository;
@@ -31,7 +32,7 @@ public class PaintingService {
 
     // Is het in onderstaande methode nodig om alle schilderijen per titel op te vragen?
     public List<PaintingDto> getAllPaintingsByTitle(String title) {
-        List<Painting> paintingList = PaintingRepository.findAllPaintingsByTitleEqualsIgnoreCase(title);
+        List<Painting> paintingList = paintingRepository.findAllPaintingsByTitleEqualsIgnoreCase(title);
         List<PaintingDto> paintingDtoList = new ArrayList<>();
 
         for(Painting painting : paintingList) {
@@ -80,7 +81,7 @@ public class PaintingService {
 
     }
 
-    public Painting = transferToPainting(PaintingInputDto dto){
+    public Painting transferToPainting(PaintingInputDto dto){
         var painting = new Painting();
 
         painting.setTitle(dto.getTitle());
@@ -100,4 +101,34 @@ public class PaintingService {
 
         return dto;
     }
+
+    // Onderstaande methode is voor de @Patch methode,
+    // voor het maken van een gedeeltelijke update van
+    // een resource. Bijvoorbeeld als ik alleen de titel
+    // van een schilderij wil aanpassen, maar niet het hele object.
+
+    public PaintingDto updatePartialPainting(Long id, PaintingInputDto newPainting) {
+        Optional<Painting> paintingOptional = paintingRepository.findById(id);
+        if (paintingOptional.isPresent()) {
+            Painting painting = paintingOptional.get();
+
+            // Alleen de velden updaten die niet null zijn
+            if (newPainting.getTitle() != null) {
+                painting.setTitle(newPainting.getTitle());
+            }
+            if (newPainting.getYear() != null) {
+                painting.setYear(newPainting.getYear());
+            }
+            if (newPainting.getImage() != null) {
+                painting.setImage(newPainting.getImage());
+            }
+
+            Painting updatedPainting = paintingRepository.save(painting);
+            return transferToDto(updatedPainting);
+        } else {
+            throw new RecordNotFoundException("geen schilderij gevonden");
+        }
+    }
+
+
 }

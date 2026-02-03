@@ -1,10 +1,12 @@
 package com.dirkjg.mouseion.models;
 
+// Verantwoordingsdocument: ik gebruik hier bewust drie specifieke imports
+// in plaats van de import jakarta.persistence.* omdat ik daarmee alleen
+// de classes importeer die ik daadwerkelijk nodig heb, waardoor IDE's en
+// andere ontwikkelaars meteen zien welke annotaties/types ik gebruik.
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-
-import java.util.List;
 
 @Entity
 public class Painting {
