@@ -80,7 +80,7 @@ public class PaintingController {
     // waar een patch een gedeeltelijk object kan updaten. Dit is waardevol omdat
     // alleen gewijzigde velden worden aangepast zonder het volledige Painting-object te overschrijven.
     // Bijvoorbeeld alleen de titel van de Painting: "Mona Lisa (restauratie)" in plaats van "Mona Lisa"
-    @PatchMapping("/painting/{id}")
+    @PatchMapping("/paintings/{id}")
     public ResponseEntity<PaintingDto> updatePartialPainting(
             @PathVariable Long id,
             @RequestBody PaintingInputDto newPainting) {

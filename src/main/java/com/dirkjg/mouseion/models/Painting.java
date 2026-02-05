@@ -6,13 +6,16 @@ package com.dirkjg.mouseion.models;
 // andere ontwikkelaars meteen zien welke annotaties/types ik gebruik.
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class Painting {
 
     @Id
-    @GeneratedValue
+    // De GenerationType.IDENTITY zorgt ervoor dat hibernate het id-veld vult met een
+    // steeds oplopende waarde.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     // variabele declaraties, de variabele Painter en CharacteristicAspects moet nog worden gemaakt, dat doe ik zodra ik de relaties ga leggen
