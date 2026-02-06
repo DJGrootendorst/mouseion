@@ -10,6 +10,16 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+// Verantwoordingsdocument TECHNISCHE KEUZE 1: CONSISTENTE CONTROLLER STRUCTUUR
+// Voor de nieuwe controllers, namelijk PainterController, EducationContentController,
+// HistoricalPeriodController, CharacteristicAspectController, heb ik ervoor gekozen
+// de stijl en structuur overeen te laten komen met de reeds bestaande en geteste
+// PaintingController. Dit betekent dat dezelfde opzet wordt gebruikt voor dependency injection,
+// CRUD-endpoints, query parameters, ResponseEntity-responses en patch-methoden.
+// Deze consistente aanpak zorgt voor overzichtelijke, herbruikbare en onderhoudbare code,
+// en minimaliseert de kans op fouten omdat het patroon al eerder in de applicatie succesvol
+// is gestest.
+
 @RestController
 public class PaintingController {
 
