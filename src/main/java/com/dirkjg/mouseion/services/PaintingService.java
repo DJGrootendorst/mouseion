@@ -4,6 +4,7 @@ import com.dirkjg.mouseion.Dtos.PaintingDto;
 import com.dirkjg.mouseion.Dtos.PaintingInputDto;
 import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
 import com.dirkjg.mouseion.models.Painting;
+import com.dirkjg.mouseion.repositories.EducationContentRepository;
 import com.dirkjg.mouseion.repositories.PaintingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,8 +16,12 @@ import java.util.Optional;
 @Service
 public class PaintingService {
     private final PaintingRepository paintingRepository;
-    public PaintingService(PaintingRepository paintingRepository) {
+    private final EducationContentRepository educationContentRepository;
+
+    public PaintingService(PaintingRepository paintingRepository,
+                           EducationContentRepository educationContentRepository) {
         this.paintingRepository = paintingRepository;
+        this.educationContentRepository = educationContentRepository;
     }
 
     public List<PaintingDto> getAllPaintings() {
@@ -130,4 +135,18 @@ public class PaintingService {
         }
     }
 
+    public void assignEducationContentToPainting(Long id, Long educationContentId) {
+        var optionalPainting = paintingRepository.findById(id);
+        var optionalEducationContent = educationContentRepository.findById(educationContentId);
+
+        if (optionalEducationContent.isPresent() && optionalEducationContent.isPresent()) {
+            var painting = optionalPainting.get();
+            var educationContent = optionalEducationContent.get();
+
+            painting.setEducationContent(educationContent);
+            paintingRepository.save(painting);
+        } else {
+            throw new RecordNotFoundException();
+        }
+    }
 }

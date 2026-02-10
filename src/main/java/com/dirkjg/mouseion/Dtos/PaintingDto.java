@@ -19,6 +19,8 @@ public class PaintingDto {
     private Integer year;
     private String image;
 
+    private EducationContentDto educationContentDto;
+
     // Getters
     public Long getId() {
         return id;
@@ -36,6 +38,10 @@ public class PaintingDto {
         return image;
     }
 
+    public EducationContentDto getEducationContentDto() {
+        return educationContentDto;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -51,5 +57,9 @@ public class PaintingDto {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setEducationContentDto(EducationContentDto educationContentDto) {
+        this.educationContentDto = educationContentDto;
     }
 }

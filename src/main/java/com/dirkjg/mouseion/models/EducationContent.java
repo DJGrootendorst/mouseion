@@ -1,10 +1,6 @@
 package com.dirkjg.mouseion.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,8 +13,11 @@ public class EducationContent {
     private String learningGoal;
     private String question;
     private String answer;
-
     private LocalDateTime createdAt;
+
+    // Dit is de target kant (niet-eigenaar) van de OneToOne-relatie met Painting.
+    @OneToOne(mappedBy = "educationContent")
+    private Painting painting;
 
     // Getters
     public Long getId() {
@@ -41,6 +40,10 @@ public class EducationContent {
         return createdAt;
     }
 
+    public Painting getPainting() {
+        return painting;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -60,5 +63,9 @@ public class EducationContent {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setPainting(Painting painting) {
+        this.painting = painting;
     }
 }

@@ -3,10 +3,12 @@ package com.dirkjg.mouseion.controllers;
 import com.dirkjg.mouseion.Dtos.PaintingDto;
 import com.dirkjg.mouseion.Dtos.PaintingInputDto;
 import com.dirkjg.mouseion.services.PaintingService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +20,7 @@ import java.util.Optional;
 // CRUD-endpoints, query parameters, ResponseEntity-responses en patch-methoden.
 // Deze consistente aanpak zorgt voor overzichtelijke, herbruikbare en onderhoudbare code,
 // en minimaliseert de kans op fouten omdat het patroon al eerder in de applicatie succesvol
-// is gestest.
+// is getest.
 
 @RestController
 public class PaintingController {
@@ -104,4 +106,11 @@ public class PaintingController {
         // "Year" was in "Painting" dus eerste gedefinieerd als een primitieve "int".
         // Een "Integer" is een object-wrapper van "int" en kan dus wel "null" zijn en is daarom geschikt voor optionele waarden zoals bij "patch".
         // "Null" betekent "geen waarde/niet aanwezig" en kan alleen bij objecten, niet bij primitieve types zoals "int".
+
+    @PutMapping("/paintings/{id}/educationconent/{remoteId}")
+    public void assignEducationContentToPainting(
+            @PathVariable("id") Long id,
+            @PathVariable Long educationContentId) {
+        paintingService.assignEducationContentToPainting(id, educationContentId);
+    }
 }

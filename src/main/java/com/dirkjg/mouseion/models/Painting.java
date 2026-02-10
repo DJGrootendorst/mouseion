@@ -4,10 +4,7 @@ package com.dirkjg.mouseion.models;
 // in plaats van de import jakarta.persistence.* omdat ik daarmee alleen
 // de classes importeer die ik daadwerkelijk nodig heb, waardoor IDE's en
 // andere ontwikkelaars meteen zien welke annotaties/types ik gebruik.
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Painting {
@@ -23,6 +20,11 @@ public class Painting {
     private Integer year;
     // bij image wordt een url ingevuld
     private String image;
+
+    // OneToOne-relatie naar EducationContent
+    @OneToOne
+    @JoinColumn(name = "education_content_id")
+    private EducationContent educationContent;
 
     // Alle variable getters
     public Long getId() {
@@ -41,6 +43,10 @@ public class Painting {
         return image;
     }
 
+    public EducationContent getEducationContent() {
+        return educationContent;
+    }
+
     // Alle variabele setters
     public void setId(Long id) {
         this.id = id;
@@ -56,5 +62,9 @@ public class Painting {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setEducationContent(EducationContent educationContent) {
+        this.educationContent = educationContent;
     }
 }
