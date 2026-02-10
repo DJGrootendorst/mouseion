@@ -85,7 +85,7 @@ public class PainterController {
             @PathVariable Long id,
             @RequestBody PainterInputDto newPainter) {
 
-        PaintingDto dto = painterService.updatePartialPainter(id, newPainter);
+        PainterDto dto = painterService.updatePartialPainter(id, newPainter);
 
         return ResponseEntity.ok().body(dto);
     }
