@@ -107,7 +107,7 @@ public class PaintingController {
         // Een "Integer" is een object-wrapper van "int" en kan dus wel "null" zijn en is daarom geschikt voor optionele waarden zoals bij "patch".
         // "Null" betekent "geen waarde/niet aanwezig" en kan alleen bij objecten, niet bij primitieve types zoals "int".
 
-    @PutMapping("/paintings/{id}/educationconent/{remoteId}")
+    @PutMapping("/paintings/{id}/educationContent/{educationContentId}")
     public void assignEducationContentToPainting(
             @PathVariable("id") Long id,
             @PathVariable Long educationContentId) {
