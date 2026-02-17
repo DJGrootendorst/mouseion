@@ -113,4 +113,19 @@ public class PaintingController {
             @PathVariable Long educationContentId) {
         paintingService.assignEducationContentToPainting(id, educationContentId);
     }
+
+    @PutMapping("/paintings/{id}/painter/{painterId}")
+    public void assignPainterToPainting(
+            @PathVariable("id") Long id,
+            @PathVariable Long painterId) {
+        paintingService.assignPainterToPainting(id, painterId);
+    }
+
+    @PutMapping("/paintings/{id}/characteristicAspect/{aspectId}")
+    public void assignCharacteristicAspectToPainting(
+            @PathVariable("id") Long id,
+            @PathVariable Long aspectId) {
+        paintingService.assignCharacteristicAspectToPainting(id, aspectId);
+    }
+
 }

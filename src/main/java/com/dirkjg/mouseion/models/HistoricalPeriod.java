@@ -1,9 +1,8 @@
 package com.dirkjg.mouseion.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class HistoricalPeriod {
@@ -16,6 +15,9 @@ public class HistoricalPeriod {
     private String name;       // naam van het tijdvak
     private int firstYear;     // beginjaar
     private int lastYear;      // eindjaar
+
+    @OneToMany(mappedBy = "historicalPeriod")
+    private List<CharacteristicAspect> characteristicAspects;
 
     // Getters
     public Long getId() {
@@ -38,6 +40,10 @@ public class HistoricalPeriod {
         return lastYear;
     }
 
+    public List<CharacteristicAspect> getCharacteristicAspects() {
+        return characteristicAspects;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -57,5 +63,9 @@ public class HistoricalPeriod {
 
     public void setLastYear(int lastYear) {
         this.lastYear = lastYear;
+    }
+
+    public void setCharacteristicAspects(List<CharacteristicAspect> characteristicAspects) {
+        this.characteristicAspects = characteristicAspects;
     }
 }

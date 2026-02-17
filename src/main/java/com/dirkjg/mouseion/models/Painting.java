@@ -26,6 +26,21 @@ public class Painting {
     @JoinColumn(name = "education_content_id")
     private EducationContent educationContent;
 
+    // ManyToOne-relatie naar Painter
+    // Vanuit Painter naar Painting is dit dus een OneToMany-relatie
+    @ManyToOne
+    @JoinColumn(name = "painter_id")
+    private Painter painter;
+    // Verantwoordingsdocument: de relatie tussen Painting en Painter is ManyToOne,
+    // omdat Painting de foreign key bevat en dus de owner side is. Hierdoor blijft de
+    // database structuur simpel en consistent. Hetzelfde geldt voor Painting en CharacteristicAspect.
+
+    // ManyToOne-relatie naar CharacteristicAspect
+    // Vanuit CharacteristicAspect naar Painting is dit dus een OneToMany-relatie
+    @ManyToOne
+    @JoinColumn(name = "characteristic_aspect_id")
+    private CharacteristicAspect characteristicAspect;
+
     // Alle variable getters
     public Long getId() {
         return id;
@@ -47,6 +62,14 @@ public class Painting {
         return educationContent;
     }
 
+    public Painter getPainter() {
+        return painter;
+    }
+
+    public CharacteristicAspect getCharacteristicAspect() {
+        return characteristicAspect;
+    }
+
     // Alle variabele setters
     public void setId(Long id) {
         this.id = id;
@@ -66,5 +89,13 @@ public class Painting {
 
     public void setEducationContent(EducationContent educationContent) {
         this.educationContent = educationContent;
+    }
+
+    public void setPainter(Painter painter) {
+        this.painter = painter;
+    }
+
+    public void setCharacteristicAspect(CharacteristicAspect characteristicAspect) {
+        this.characteristicAspect = characteristicAspect;
     }
 }

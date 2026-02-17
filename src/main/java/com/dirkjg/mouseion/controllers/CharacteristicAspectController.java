@@ -86,4 +86,11 @@ public class CharacteristicAspectController {
 
         return ResponseEntity.ok().body(dto);
     }
+
+    @PutMapping("/CharacteristicAspects/{aspectId}/historicalPeriod/{periodId}")
+    public void assignHistoricalPeriodToCharacteristicAspect(
+            @PathVariable Long aspectId,
+            @PathVariable Long periodId) {
+        characteristicAspectService.assignHistoricalPeriodToCharacteristicAspect(aspectId, periodId);
+    }
 }

@@ -1,11 +1,16 @@
 package com.dirkjg.mouseion.services;
 
+import com.dirkjg.mouseion.Dtos.PainterDto;
 import com.dirkjg.mouseion.Dtos.PaintingDto;
 import com.dirkjg.mouseion.Dtos.PaintingInputDto;
 import com.dirkjg.mouseion.Dtos.EducationContentDto;
+import com.dirkjg.mouseion.Dtos.CharacteristicAspectDto;
 import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
 import com.dirkjg.mouseion.models.Painting;
+import com.dirkjg.mouseion.models.Painter;
+import com.dirkjg.mouseion.repositories.CharacteristicAspectRepository;
 import com.dirkjg.mouseion.repositories.EducationContentRepository;
+import com.dirkjg.mouseion.repositories.PainterRepository;
 import com.dirkjg.mouseion.repositories.PaintingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,11 +24,17 @@ public class PaintingService {
 
     private final PaintingRepository paintingRepository;
     private final EducationContentRepository educationContentRepository;
+    private final PainterRepository painterRepository;
+    private final CharacteristicAspectRepository characteristicAspectRepository;
 
     public PaintingService(PaintingRepository paintingRepository,
-                           EducationContentRepository educationContentRepository) {
+                           EducationContentRepository educationContentRepository,
+                           PainterRepository painterRepository,
+                           CharacteristicAspectRepository characteristicAspectRepository) {
         this.paintingRepository = paintingRepository;
         this.educationContentRepository = educationContentRepository;
+        this.painterRepository = painterRepository;
+        this.characteristicAspectRepository = characteristicAspectRepository;
     }
 
     // CRUD-methodes
@@ -92,6 +103,8 @@ public class PaintingService {
 
     public PaintingDto transferToDto(Painting painting){
         PaintingDto dto = new PaintingDto();
+
+        // Basisvelden
         dto.setId(painting.getId());
         dto.setTitle(painting.getTitle());
         dto.setYear(painting.getYear());
@@ -111,10 +124,33 @@ public class PaintingService {
             dto.setEducationContentDto(educationDto);
         }
 
+        // Koppeling naar Painter
+        if (painting.getPainter() != null) {
+            var painter = painting.getPainter();
+            var painterDto = new PainterDto();
+            painterDto.setId(painter.getId());
+            painterDto.setName(painter.getName());
+            painterDto.setBirthYear(painter.getBirthYear());
+            painterDto.setDeathYear(painter.getDeathYear());
+
+            dto.setPainterDto(painterDto);
+        }
+
+        // Koppeling naar CharacteristicAspect
+        if (painting.getCharacteristicAspect() != null) {
+            var aspect = painting.getCharacteristicAspect();
+            var aspectDto = new CharacteristicAspectDto();
+            aspectDto.setId(aspect.getId());
+            aspectDto.setNumber(aspect.getNumber());
+            aspectDto.setDescription(aspect.getDescription());
+
+            dto.setCharacteristicAspectDto(aspectDto);
+        }
+
         return dto;
     }
 
-    // Methode om EducationContent aan Painting te koppelen
+    // Assign methode om EducationContent aan Painting te koppelen
     public void assignEducationContentToPainting(Long paintingId, Long educationContentId) {
         var optionalPainting = paintingRepository.findById(paintingId);
         var optionalEducationContent = educationContentRepository.findById(educationContentId);
@@ -128,6 +164,39 @@ public class PaintingService {
         }
     }
 
+    // Assign methode om Painter aan Painting te koppelen
+    public void assignPainterToPainting(Long paintingId, Long painterId) {
+        var paintingOptional = paintingRepository.findById(paintingId);
+        var painterOptional = painterRepository.findById(painterId);
+
+        if (paintingOptional.isPresent() && painterOptional.isPresent()) {
+
+            Painting painting = paintingOptional.get();
+            Painter painter = painterOptional.get();
+
+            painting.setPainter(painter);
+            paintingRepository.save(painting);
+
+        } else {
+            throw new RecordNotFoundException("Painting of Painter niet gevonden");
+        }
+    }
+
+    // Assign methode om CharacteristicAspect aan Painting te koppelen
+    public void assignCharacteristicAspectToPainting(Long paintingId, Long aspectId) {
+        var optionalPainting = paintingRepository.findById(paintingId);
+        var optionalAspect = characteristicAspectRepository.findById(aspectId);
+
+        if(optionalPainting.isPresent() && optionalAspect.isPresent()) {
+            var painting = optionalPainting.get();
+            var aspect = optionalAspect.get();
+
+            painting.setCharacteristicAspect(aspect);
+            paintingRepository.save(painting);
+        } else {
+            throw new RecordNotFoundException("Painting of CharacteristicAspect niet gevonden");
+        }
+    }
 
     // Onderstaande methode is voor de @Patch methode,
     // voor het maken van een gedeeltelijke update van

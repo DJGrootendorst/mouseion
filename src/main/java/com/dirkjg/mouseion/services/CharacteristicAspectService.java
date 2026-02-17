@@ -2,87 +2,154 @@ package com.dirkjg.mouseion.services;
 
 import com.dirkjg.mouseion.Dtos.CharacteristicAspectDto;
 import com.dirkjg.mouseion.Dtos.CharacteristicAspectInputDto;
+import com.dirkjg.mouseion.Dtos.HistoricalPeriodDto;
 import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
 import com.dirkjg.mouseion.models.CharacteristicAspect;
+import com.dirkjg.mouseion.models.HistoricalPeriod;
 import com.dirkjg.mouseion.repositories.CharacteristicAspectRepository;
+import com.dirkjg.mouseion.repositories.HistoricalPeriodRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// Verantwoording TECHNISCHE KEUZE:
+// De ManyToOne-relatie tussen CharacteristicAspect en HistoricalPeriod is gekozen omdat
+// elk Characteristic Aspect logisch binnen één Historical Period valt, terwijl een periode
+// meerdere kenmerkende aspecten kan hebben. Hierdoor vormt de periode de overkoepelende context
+// en de aspecten de gedetailleerde invulling.
+
+// De koppeling wordt afgehandeld in CharacteristicAspectService in plaats van in PaintingService,
+// omdat HistoricalPeriods en CharacteristicAspects de structurele ruggengraat van de applicatie vormen
+// en niet afhankelijk zijn van individuele bronnen zoals Paintings. Zodat schaalbaarheid naar ook andere
+// historische bronnen mogelijk wordt in de toekomst, zoals bijvoorbeeld HistoricalPictures of HistoricalVideos.
+
+// Voordelen van deze aanpak:
+// 1. Centralisatie en logica.
+// 2. Schaalbaarheid.
+// 3. Duidelijk eigenaarschap: de ManyToOne-relatie laat zien dat de periode de eigenaar is van de context
+//    van een aspect, waardoor de database structuur logisch en consistent blijft.
+
 @Service
 public class CharacteristicAspectService {
 
-    private final CharacteristicAspectRepository repository;
+    private final CharacteristicAspectRepository characteristicAspectRepository;
+    private final HistoricalPeriodRepository historicalPeriodRepository;
 
-    public CharacteristicAspectService(CharacteristicAspectRepository repository) {
-        this.repository = repository;
+    public CharacteristicAspectService(
+            CharacteristicAspectRepository characteristicAspectRepository,
+            HistoricalPeriodRepository historicalPeriodRepository) {
+        this.characteristicAspectRepository = characteristicAspectRepository;
+        this.historicalPeriodRepository = historicalPeriodRepository;
     }
 
+    // Alle CharacteristicAspects ophalen
     public List<CharacteristicAspectDto> getAllAspects() {
-        List<CharacteristicAspect> list = repository.findAll();
+        List<CharacteristicAspect> aspectList = characteristicAspectRepository.findAll();
         List<CharacteristicAspectDto> dtos = new ArrayList<>();
-        for (CharacteristicAspect c : list) dtos.add(toDto(c));
+        for (CharacteristicAspect aspect : aspectList) {
+            dtos.add(transferToDto(aspect));
+        }
         return dtos;
     }
 
+    // Alle CharacteristicAspects op basis van number
     public List<CharacteristicAspectDto> getAspectsByNumber(int number) {
-        List<CharacteristicAspect> list = repository.findAllByNumber(number);
+        List<CharacteristicAspect> aspectList = characteristicAspectRepository.findAllByNumber(number);
         List<CharacteristicAspectDto> dtos = new ArrayList<>();
-        for (CharacteristicAspect c : list) dtos.add(toDto(c));
+        for (CharacteristicAspect aspect : aspectList) {
+            dtos.add(transferToDto(aspect));
+        }
         return dtos;
     }
 
+    // Eén CharacteristicAspect ophalen
     public CharacteristicAspectDto getAspectById(Long id) {
-        CharacteristicAspect c = repository.findById(id)
+        CharacteristicAspect aspect = characteristicAspectRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Geen aspect gevonden"));
-        return toDto(c);
+        return transferToDto(aspect);
     }
 
+    // Nieuw CharacteristicAspect toevoegen
     public CharacteristicAspectDto addAspect(CharacteristicAspectInputDto dto) {
-        CharacteristicAspect c = toEntity(dto);
-        repository.save(c);
-        return toDto(c);
+        CharacteristicAspect aspect = toEntity(dto);
+        characteristicAspectRepository.save(aspect);
+        return transferToDto(aspect);
     }
 
+    // CharacteristicAspect verwijderen
     public void deleteAspect(Long id) {
-        repository.deleteById(id);
+        characteristicAspectRepository.deleteById(id);
     }
 
+    // Volledige update
     public CharacteristicAspectDto updateAspect(Long id, CharacteristicAspectInputDto dto) {
-        CharacteristicAspect c = repository.findById(id)
+        CharacteristicAspect aspect = characteristicAspectRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Geen aspect gevonden"));
 
-        c.setNumber(dto.getNumber());
-        c.setDescription(dto.getDescription());
+        aspect.setNumber(dto.getNumber());
+        aspect.setDescription(dto.getDescription());
 
-        CharacteristicAspect updated = repository.save(c);
-        return toDto(updated);
+        CharacteristicAspect updated = characteristicAspectRepository.save(aspect);
+        return transferToDto(updated);
     }
 
+    // Gedeeltelijke update
     public CharacteristicAspectDto updatePartialAspect(Long id, CharacteristicAspectInputDto dto) {
-        CharacteristicAspect c = repository.findById(id)
+        CharacteristicAspect aspect = characteristicAspectRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Geen aspect gevonden"));
 
-        if (dto.getNumber() != 0) c.setNumber(dto.getNumber());
-        if (dto.getDescription() != null) c.setDescription(dto.getDescription());
+        if (dto.getNumber() != 0) aspect.setNumber(dto.getNumber());
+        if (dto.getDescription() != null) aspect.setDescription(dto.getDescription());
 
-        CharacteristicAspect updated = repository.save(c);
-        return toDto(updated);
+        CharacteristicAspect updated = characteristicAspectRepository.save(aspect);
+        return transferToDto(updated);
     }
 
+    // Entity converter
     public CharacteristicAspect toEntity(CharacteristicAspectInputDto dto) {
-        CharacteristicAspect c = new CharacteristicAspect();
-        c.setNumber(dto.getNumber());
-        c.setDescription(dto.getDescription());
-        return c;
+        CharacteristicAspect aspect = new CharacteristicAspect();
+        aspect.setNumber(dto.getNumber());
+        aspect.setDescription(dto.getDescription());
+        return aspect;
     }
 
-    public CharacteristicAspectDto toDto(CharacteristicAspect c) {
+    // DTO converter (transferToDto)
+    public CharacteristicAspectDto transferToDto(CharacteristicAspect aspect) {
         CharacteristicAspectDto dto = new CharacteristicAspectDto();
-        dto.setId(c.getId());
-        dto.setNumber(c.getNumber());
-        dto.setDescription(c.getDescription());
+        dto.setId(aspect.getId());
+        dto.setNumber(aspect.getNumber());
+        dto.setDescription(aspect.getDescription());
+
+        // HistoricalPeriod koppelen aan DTO
+        if (aspect.getHistoricalPeriod() != null) {
+            HistoricalPeriod period = aspect.getHistoricalPeriod();
+            HistoricalPeriodDto periodDto = new HistoricalPeriodDto();
+            periodDto.setId(period.getId());
+            periodDto.setPeriodNumber(period.getPeriodNumber());
+            periodDto.setName(period.getName());
+            periodDto.setFirstYear(period.getFirstYear());
+            periodDto.setLastYear(period.getLastYear());
+
+            dto.setHistoricalPeriodDto(periodDto);
+        }
+
         return dto;
+    }
+
+    // Assign HistoricalPeriod aan CharacteristicAspect
+    public void assignHistoricalPeriodToCharacteristicAspect(Long aspectId, Long periodId) {
+        var aspectOptional = characteristicAspectRepository.findById(aspectId);
+        var periodOptional = historicalPeriodRepository.findById(periodId);
+
+        if (aspectOptional.isPresent() && periodOptional.isPresent()) {
+            CharacteristicAspect aspect = aspectOptional.get();
+            HistoricalPeriod period = periodOptional.get();
+
+            aspect.setHistoricalPeriod(period);
+            characteristicAspectRepository.save(aspect);
+        } else {
+            throw new RecordNotFoundException("CharacteristicAspect of HistoricalPeriod niet gevonden");
+        }
     }
 }

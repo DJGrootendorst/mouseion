@@ -20,6 +20,8 @@ public class PaintingDto {
     private String image;
 
     private EducationContentDto educationContentDto;
+    private PainterDto painterDto;
+    private CharacteristicAspectDto characteristicAspectDto;
 
     // Getters
     public Long getId() {
@@ -42,6 +44,14 @@ public class PaintingDto {
         return educationContentDto;
     }
 
+    public PainterDto getPainterDto() {
+        return painterDto;
+    }
+
+    public CharacteristicAspectDto getCharacteristicAspectDto() {
+        return characteristicAspectDto;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -61,5 +71,13 @@ public class PaintingDto {
 
     public void setEducationContentDto(EducationContentDto educationContentDto) {
         this.educationContentDto = educationContentDto;
+    }
+
+    public void setPainterDto(PainterDto painterDto) {
+        this.painterDto = painterDto;
+    }
+
+    public void setCharacteristicAspectDto(CharacteristicAspectDto characteristicAspectDto) {
+        this.characteristicAspectDto = characteristicAspectDto;
     }
 }
