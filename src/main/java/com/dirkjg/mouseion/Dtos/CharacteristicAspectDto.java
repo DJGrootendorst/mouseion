@@ -12,7 +12,7 @@ public class CharacteristicAspectDto {
     public CharacteristicAspectDto() {
     }
 
-    // Constructor met alle velden
+    // Constructor zonder historicalPeriodDto
     public CharacteristicAspectDto(Long id, int number, String description) {
         this.id = id;
         this.number = number;
