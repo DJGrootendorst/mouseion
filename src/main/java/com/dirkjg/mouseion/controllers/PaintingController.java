@@ -1,104 +1,103 @@
 package com.dirkjg.mouseion.controllers;
 
-import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
+import com.dirkjg.mouseion.Dtos.PaintingDto;
+import com.dirkjg.mouseion.Dtos.PaintingInputDto;
 import com.dirkjg.mouseion.models.Painting;
-import com.dirkjg.mouseion.repositories.PaintingRepository;
+import com.dirkjg.mouseion.services.FileService;
+import com.dirkjg.mouseion.services.PaintingService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+// Verantwoordingsdocument TECHNISCHE KEUZE 1: CONSISTENTE CONTROLLER STRUCTUUR
+// Voor de nieuwe controllers, namelijk PainterController, EducationContentController,
+// HistoricalPeriodController, CharacteristicAspectController, heb ik ervoor gekozen
+// de stijl en structuur overeen te laten komen met de reeds bestaande en geteste
+// PaintingController. Dit betekent dat dezelfde opzet wordt gebruikt voor dependency injection,
+// CRUD-endpoints, query parameters, ResponseEntity-responses en patch-methoden.
+// Deze consistente aanpak zorgt voor overzichtelijke, herbruikbare en onderhoudbare code,
+// en minimaliseert de kans op fouten omdat het patroon al eerder in de applicatie succesvol
+// is getest.
 
 @RestController
 public class PaintingController {
 
-    private final PaintingRepository paintingRepository;
+    private final PaintingService paintingService;
+    private final FileService fileService;
 
-    // Constructor injectie
-    public PaintingController(PaintingRepository paintingRepository) {
-        this.paintingRepository = paintingRepository;
+    public PaintingController(PaintingService paintingService, FileService fileService) {
+        this.paintingService = paintingService;
+        this.fileService = fileService;
     }
 
+    // Get all paintings
     @GetMapping("/paintings")
-    public ResponseEntity<List<Painting>> getAllPaintings(@RequestParam(value = "title", required = false) String title) {
+    public ResponseEntity<List<PaintingDto>> getAllPaintings(
+            @RequestParam(value = "title", required = false) Optional<String> title) {
 
-        List<Painting> paintings;
+        List<PaintingDto> dtos;
 
-        if (title == null) {
-            // Vul de paintings lijst met alle paintings
-            paintings = paintingRepository.findAll();
+        if (title.isEmpty()){
+            dtos = paintingService.getAllPaintings();
         } else {
-            // Vul de paintingslijst met alle paintings die een bepaalde title hebben
-            paintings = paintingRepository.findAllPaintingsByTitleEqualsIgnoreCase(title);
+            dtos = paintingService.getAllPaintingsByTitle(title.get());
         }
 
-        // Return een String met een 200 status
-        return ResponseEntity.ok().body(paintings);
+        return ResponseEntity.ok().body(dtos);
+
     }
 
-    // Return 1 painting met een specifiek id
+    // Get een painting by id
     @GetMapping("/paintings/{id}")
-    public ResponseEntity<Painting> getPainting(@PathVariable("id") Long id) {
+    public ResponseEntity<PaintingDto> getPainting(@PathVariable("id")Long id) {
 
-        Optional<Painting> painting = paintingRepository.findById(id);
+        PaintingDto painting = paintingService.getPaintingById(id);
 
-        // Check op de optional empty is. Het tegenovergestelde alternatief is "painting.IsPresent()"
-        if (painting.isEmpty()) {
-
-            // Als er geen painting in de optional staat, roepen we hier de RecordNotFoundException constructor aan met message.
-            throw new RecordNotFoundException("No painting found with id: " + id);
-
-        } else {
-            // Als er wel een painting in de optional staat, dan halen we die uit de optional met de get-methode.
-            Painting painting1 = painting.get();
-
-            // Return een String met een 200 status
-            return ResponseEntity.ok().body(painting1);
-        }
+        return ResponseEntity.ok().body(painting);
     }
 
-    // Hier geef ik een painting mee in de parameter. Waarbij het JSON object exact overeen moet komen met het Painting object.
+    // Post een nieuwe painting
     @PostMapping("/paintings")
-    public ResponseEntity<Painting> addPainting(@RequestBody Painting painting) {
+    public ResponseEntity<PaintingDto> addPainting(@Valid @RequestBody PaintingInputDto paintingInputDto) {
 
-        // Sla de nieuwe painting in de database op met de save-methode van de repository
-        Painting savedPainting = paintingRepository.save(painting);
+        PaintingDto dto = paintingService.addPainting(paintingInputDto);
 
-        // Return de gemaakte painting en een 201 status
-        return ResponseEntity.status(201).body(savedPainting);
+        return ResponseEntity.created(null).body(dto);
+
     }
 
+    // Verwijder een painting by id
     @DeleteMapping("/paintings/{id}")
-    public ResponseEntity<Object> deletePainting(@PathVariable("id") Long id) {
+    public ResponseEntity<Object> deletePainting(@PathVariable Long id) {
 
-        // Verwijder de painting met het opgegeven id uit de database
-        paintingRepository.deleteById(id);
+        paintingService.deletePainting(id);
 
-        // Return een 204 status
         return ResponseEntity.noContent().build();
+
     }
 
+    // Volledige update van een painting
     @PutMapping("/paintings/{id}")
-    public ResponseEntity<Painting> updatePainting(@PathVariable Long id, @RequestBody Painting newPainting) {
+    public ResponseEntity<PaintingDto> updatePainting(@PathVariable Long id, @Valid @RequestBody PaintingInputDto newPainting) {
 
-        // Haal de aan te passen painting uit de database met het gegeven id
-        Optional<Painting> painting = paintingRepository.findById(id);
+        PaintingDto dto = paintingService.updatePainting(id, newPainting);
 
-        // Als eerste checken of de aan te passen painting wel in de database bestaat
-        if (painting.isEmpty()) {
-            throw new RecordNotFoundException("No painting found with id: " + id);
-        } else {
-            // Verander alle waardes van de painting uit de database naar de waardes van de painting uit de parameters.
-            // Behalve de id. Als je de id veranderd, dan wordt er een nieuw object gemaakt in de database.
-            Painting painting1 = painting.get();
-            painting1.setTitle(newPainting.getTitle());
-            painting1.setYear(newPainting.getYear());
-            painting1.setImage(newPainting.getImage());
-            // Sla de gewijzigde waarden op in de database onder dezelfde id.
-            Painting returnPainting = paintingRepository.save(painting1);
-            // Return de nieuwe versie van deze painting en een 200 code.
-            return ResponseEntity.ok().body(returnPainting);
-        }
+        return ResponseEntity.ok().body(dto);
+
     }
 
     // VERANTWOORDINGSDOCUMENT TECHNISCHE KEUZE 1
@@ -106,34 +105,74 @@ public class PaintingController {
     // waar een patch een gedeeltelijk object kan updaten. Dit is waardevol omdat
     // alleen gewijzigde velden worden aangepast zonder het volledige Painting-object te overschrijven.
     // Bijvoorbeeld alleen de titel van de Painting: "Mona Lisa (restauratie)" in plaats van "Mona Lisa"
-    @PatchMapping("/painting/{id}")
-    public ResponseEntity<Painting> updatePartialPainting(@PathVariable Long id, @RequestBody Painting newPainting) {
-        Optional<Painting> painting = paintingRepository.findById(id);
+    @PatchMapping("/paintings/{id}")
+    public ResponseEntity<PaintingDto> updatePartialPainting(
+            @PathVariable Long id,
+            @RequestBody PaintingInputDto newPainting) {
 
-        if (painting.isEmpty()) {
-            throw new RecordNotFoundException("No painting found with id: " + id);
+        PaintingDto dto = paintingService.updatePartialPainting(id, newPainting);
 
-        } else {
+        return ResponseEntity.ok().body(dto);
+   }
+        // VERANTWOORDINGSDOCUMENT REFLECTIE 1:
+        // In het model painting had ik eerst "private int year" staan. Maar een "int" kan niet null zijn, een "integer" kan dat wel.
+        // "Year" was in "Painting" dus eerste gedefinieerd als een primitieve "int".
+        // Een "Integer" is een object-wrapper van "int" en kan dus wel "null" zijn en is daarom geschikt voor optionele waarden zoals bij "patch".
+        // "Null" betekent "geen waarde/niet aanwezig" en kan alleen bij objecten, niet bij primitieve types zoals "int".
 
-            Painting painting1 = painting.get();
-            if (newPainting.getTitle() != null) {
-                painting1.setTitle(newPainting.getTitle());
-            }
-
-            // VERANTWOORDINGSDOCUMENT REFLECTIE 1:
-            // In het model painting had ik eerst "private int year" staan. Maar een "int" kan niet null zijn, een "integer" kan dat wel.
-            // "Year" was in "Painting" dus eerste gedefinieerd als een primitieve "int".
-            // Een "Integer" is een object-wrapper van "int" en kan dus wel "null" zijn en is daarom geschikt voor optionele waarden zoals bij "patch".
-            // "Null" betekent "geen waarde/niet aanwezig" en kan alleen bij objecten, niet bij primitieve types zoals "int".
-            if (newPainting.getYear() != null) {
-                painting1.setYear(newPainting.getYear());
-            }
-            if (newPainting.getImage() != null) {
-                painting1.setImage(newPainting.getImage());
-            }
-
-            Painting returnPainting = paintingRepository.save(painting1);
-            return ResponseEntity.ok().body(returnPainting);
-        }
+    @PutMapping("/paintings/{id}/educationContent/{educationContentId}")
+    public void assignEducationContentToPainting(
+            @PathVariable("id") Long id,
+            @PathVariable Long educationContentId) {
+        paintingService.assignEducationContentToPainting(id, educationContentId);
     }
+
+    @PutMapping("/paintings/{id}/painter/{painterId}")
+    public void assignPainterToPainting(
+            @PathVariable("id") Long id,
+            @PathVariable Long painterId) {
+        paintingService.assignPainterToPainting(id, painterId);
+    }
+
+    @PutMapping("/paintings/{id}/characteristicAspect/{aspectId}")
+    public void assignCharacteristicAspectToPainting(
+            @PathVariable("id") Long id,
+            @PathVariable Long aspectId) {
+        paintingService.assignCharacteristicAspectToPainting(id, aspectId);
+    }
+
+    @PostMapping("/paintings/{id}/image")
+    public ResponseEntity<Painting> addImageToPainting(@PathVariable("id") Long paintingNumber,
+                                                       @RequestBody MultipartFile file)
+    throws IOException {
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/paintings/")
+                .path(Objects.requireNonNull(paintingNumber.toString()))
+                .path("/image")
+                .toUriString();
+        String fileName = fileService.storeFile(file);
+        Painting painting = paintingService.assignImageToPainting(fileName, paintingNumber);
+
+        return ResponseEntity.created(URI.create(url)).body(painting);
+    }
+
+    @GetMapping("/paintings/{id}/image")
+    public ResponseEntity<Resource> getPaintingImage(@PathVariable("id") Long paintingId, HttpServletRequest request) {
+        Resource resource = paintingService.getImageFromPainting(paintingId);
+
+        String mimeType;
+
+        try{
+            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType(mimeType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
+                .body(resource);
+    }
+
 }

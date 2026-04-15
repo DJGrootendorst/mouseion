@@ -1,16 +1,18 @@
 package com.dirkjg.mouseion.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-
-import java.util.List;
+// Verantwoordingsdocument: ik gebruik hier bewust drie specifieke imports
+// in plaats van de import jakarta.persistence.* omdat ik daarmee alleen
+// de classes importeer die ik daadwerkelijk nodig heb, waardoor IDE's en
+// andere ontwikkelaars meteen zien welke annotaties/types ik gebruik.
+import jakarta.persistence.*;
 
 @Entity
 public class Painting {
 
     @Id
-    @GeneratedValue
+    // De GenerationType.IDENTITY zorgt ervoor dat hibernate het id-veld vult met een
+    // steeds oplopende waarde.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     // variabele declaraties, de variabele Painter en CharacteristicAspects moet nog worden gemaakt, dat doe ik zodra ik de relaties ga leggen
@@ -19,7 +21,27 @@ public class Painting {
     // bij image wordt een url ingevuld
     private String image;
 
-    // Alle variabele getters
+    // OneToOne-relatie naar EducationContent
+    @OneToOne
+    @JoinColumn(name = "education_content_id")
+    private EducationContent educationContent;
+
+    // ManyToOne-relatie naar Painter
+    // Vanuit Painter naar Painting is dit dus een OneToMany-relatie
+    @ManyToOne
+    @JoinColumn(name = "painter_id")
+    private Painter painter;
+    // Verantwoordingsdocument: de relatie tussen Painting en Painter is ManyToOne,
+    // omdat Painting de foreign key bevat en dus de owner side is. Hierdoor blijft de
+    // database structuur simpel en consistent. Hetzelfde geldt voor Painting en CharacteristicAspect.
+
+    // ManyToOne-relatie naar CharacteristicAspect
+    // Vanuit CharacteristicAspect naar Painting is dit dus een OneToMany-relatie
+    @ManyToOne
+    @JoinColumn(name = "characteristic_aspect_id")
+    private CharacteristicAspect characteristicAspect;
+
+    // Alle variable getters
     public Long getId() {
         return id;
     }
@@ -34,6 +56,18 @@ public class Painting {
 
     public String getImage() {
         return image;
+    }
+
+    public EducationContent getEducationContent() {
+        return educationContent;
+    }
+
+    public Painter getPainter() {
+        return painter;
+    }
+
+    public CharacteristicAspect getCharacteristicAspect() {
+        return characteristicAspect;
     }
 
     // Alle variabele setters
@@ -51,5 +85,17 @@ public class Painting {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setEducationContent(EducationContent educationContent) {
+        this.educationContent = educationContent;
+    }
+
+    public void setPainter(Painter painter) {
+        this.painter = painter;
+    }
+
+    public void setCharacteristicAspect(CharacteristicAspect characteristicAspect) {
+        this.characteristicAspect = characteristicAspect;
     }
 }
