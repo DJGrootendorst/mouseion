@@ -8,10 +8,9 @@ import com.dirkjg.mouseion.Dtos.CharacteristicAspectDto;
 import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
 import com.dirkjg.mouseion.models.Painting;
 import com.dirkjg.mouseion.models.Painter;
-import com.dirkjg.mouseion.repositories.CharacteristicAspectRepository;
-import com.dirkjg.mouseion.repositories.EducationContentRepository;
-import com.dirkjg.mouseion.repositories.PainterRepository;
-import com.dirkjg.mouseion.repositories.PaintingRepository;
+import com.dirkjg.mouseion.repositories.*;
+import jakarta.transaction.Transactional;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -26,15 +25,19 @@ public class PaintingService {
     private final EducationContentRepository educationContentRepository;
     private final PainterRepository painterRepository;
     private final CharacteristicAspectRepository characteristicAspectRepository;
+    private final FileService fileService;
 
     public PaintingService(PaintingRepository paintingRepository,
                            EducationContentRepository educationContentRepository,
                            PainterRepository painterRepository,
-                           CharacteristicAspectRepository characteristicAspectRepository) {
+                           CharacteristicAspectRepository characteristicAspectRepository,
+                           FileService fileService) {
         this.paintingRepository = paintingRepository;
         this.educationContentRepository = educationContentRepository;
         this.painterRepository = painterRepository;
         this.characteristicAspectRepository = characteristicAspectRepository;
+        this.fileService = fileService;
+
     }
 
     // CRUD-methodes
@@ -224,5 +227,28 @@ public class PaintingService {
         } else {
             throw new RecordNotFoundException("geen schilderij gevonden");
         }
+    }
+    @Transactional
+    public Painting assignImageToPainting(String fileName, Long id) {
+        Painting painting = paintingRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Painting not found"));
+
+        painting.setImage(fileName);
+        return paintingRepository.save(painting);
+    }
+
+    @Transactional
+    public Resource getImageFromPainting(Long id) {
+        Painting painting = paintingRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Painting not found"));
+
+        String fileName = painting.getImage();
+
+        if (fileName == null) {
+            throw new RecordNotFoundException("Painting has no image");
+        }
+
+        return fileService.downloadFile(fileName);
+
     }
 }

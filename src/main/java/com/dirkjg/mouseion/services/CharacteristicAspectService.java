@@ -124,13 +124,15 @@ public class CharacteristicAspectService {
         // HistoricalPeriod koppelen aan DTO
         if (aspect.getHistoricalPeriod() != null) {
             HistoricalPeriod period = aspect.getHistoricalPeriod();
-            HistoricalPeriodDto periodDto = new HistoricalPeriodDto();
-            periodDto.setId(period.getId());
-            periodDto.setPeriodNumber(period.getPeriodNumber());
-            periodDto.setName(period.getName());
-            periodDto.setFirstYear(period.getFirstYear());
-            periodDto.setLastYear(period.getLastYear());
 
+            HistoricalPeriodDto periodDto =
+                    new HistoricalPeriodDto(
+                            period.getId(),
+                            period.getPeriodNumber(),
+                            period.getName(),
+                            period.getFirstYear(),
+                            period.getLastYear()
+                    );
             dto.setHistoricalPeriodDto(periodDto);
         }
 

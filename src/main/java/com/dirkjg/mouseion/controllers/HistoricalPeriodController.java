@@ -22,6 +22,13 @@ import java.util.Optional;
 // Dit geldt ook voor CharacteristicAspectController. Er zijn namelijk 49 Kenmerkende Aspecten en
 // die zijn van tevoren vastgelegd.
 
+// Verantwoordingsdocument TECHNISCHE KEUZE 3: Enkelvoudige en meervoudige koppeling
+// In de applicatie is ervoor gekozen om zowel een enkelvoudige als een meervoudige assign-functionaliteit
+// te implementeren voor het koppelen van CharacteristicAspects aan een HistoricalPeriod.
+// De enkelvoudige assign maakt het mogelijk om één aspect per request te koppelen, wat overzichtelijk en
+// eenvoudig te testen is. De meervoudige assign maakt het mogelijk om meerdere aspecten in één keer te koppelen,
+// wat efficiënter. Door beide methoden te gebruiken is de applicatie flexibel en geschikt voor verschillende gebruikssituaties.
+
 @RestController
 public class HistoricalPeriodController {
 
@@ -90,4 +97,19 @@ public class HistoricalPeriodController {
         return ResponseEntity.ok().body(dto);
     }
 
+    // Voor een enkelvoudige assign van één aspect aan een periode
+    @PutMapping("/historicalPeriods/{periodId}/characteristicAspects/{aspectId}")
+    public void assignCharacteristicAspectToHistoricalPeriod(
+            @PathVariable Long periodId,
+            @PathVariable Long aspectId) {
+        historicalPeriodService.assignCharacteristicAspectToHistoricalPeriod(periodId, aspectId);
+    }
+
+    // Voor een meervoudige assign van meerdere aspecten aan een periode
+    @PutMapping("/historicalPeriods/{periodId}/characteristicAspects")
+    public void assignMultipleAspectsToHistoricalPeriod(
+            @PathVariable Long periodId,
+            @RequestBody List<Long> aspectIds) {
+        historicalPeriodService.assignMultipleAspectsToHistoricalPeriod(periodId, aspectIds);
+    }
 }

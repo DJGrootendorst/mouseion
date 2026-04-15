@@ -1,5 +1,9 @@
 package com.dirkjg.mouseion.Dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.List;
+
 public class HistoricalPeriodDto {
 
     private Long id;
@@ -7,6 +11,8 @@ public class HistoricalPeriodDto {
     private String name;
     private int firstYear;
     private int lastYear;
+    @JsonIgnoreProperties(value = { "id", "historicalPeriodDto" })
+    private List<CharacteristicAspectDto> characteristicAspectDtos;
 
     // Lege constructor
     public HistoricalPeriodDto() {
@@ -42,6 +48,10 @@ public class HistoricalPeriodDto {
         return lastYear;
     }
 
+    public List<CharacteristicAspectDto> getCharacteristicAspectDtos() {
+        return characteristicAspectDtos;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -61,5 +71,9 @@ public class HistoricalPeriodDto {
 
     public void setLastYear(int lastYear) {
         this.lastYear = lastYear;
+    }
+
+    public void setCharacteristicAspectDtos(List<CharacteristicAspectDto> characteristicAspectDtos) {
+        this.characteristicAspectDtos = characteristicAspectDtos;
     }
 }

@@ -2,14 +2,25 @@ package com.dirkjg.mouseion.controllers;
 
 import com.dirkjg.mouseion.Dtos.PaintingDto;
 import com.dirkjg.mouseion.Dtos.PaintingInputDto;
+import com.dirkjg.mouseion.models.Painting;
+import com.dirkjg.mouseion.services.FileService;
 import com.dirkjg.mouseion.services.PaintingService;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 // Verantwoordingsdocument TECHNISCHE KEUZE 1: CONSISTENTE CONTROLLER STRUCTUUR
@@ -26,9 +37,11 @@ import java.util.Optional;
 public class PaintingController {
 
     private final PaintingService paintingService;
+    private final FileService fileService;
 
-    public PaintingController(PaintingService paintingService) {
+    public PaintingController(PaintingService paintingService, FileService fileService) {
         this.paintingService = paintingService;
+        this.fileService = fileService;
     }
 
     // Get all paintings
@@ -126,6 +139,40 @@ public class PaintingController {
             @PathVariable("id") Long id,
             @PathVariable Long aspectId) {
         paintingService.assignCharacteristicAspectToPainting(id, aspectId);
+    }
+
+    @PostMapping("/paintings/{id}/image")
+    public ResponseEntity<Painting> addImageToPainting(@PathVariable("id") Long paintingNumber,
+                                                       @RequestBody MultipartFile file)
+    throws IOException {
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/paintings/")
+                .path(Objects.requireNonNull(paintingNumber.toString()))
+                .path("/image")
+                .toUriString();
+        String fileName = fileService.storeFile(file);
+        Painting painting = paintingService.assignImageToPainting(fileName, paintingNumber);
+
+        return ResponseEntity.created(URI.create(url)).body(painting);
+    }
+
+    @GetMapping("/paintings/{id}/image")
+    public ResponseEntity<Resource> getPaintingImage(@PathVariable("id") Long paintingId, HttpServletRequest request) {
+        Resource resource = paintingService.getImageFromPainting(paintingId);
+
+        String mimeType;
+
+        try{
+            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType(mimeType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
+                .body(resource);
     }
 
 }

@@ -1,11 +1,13 @@
 package com.dirkjg.mouseion.Dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 public class CharacteristicAspectDto {
 
     private Long id;
     private int number;
     private String description;
-
+    @JsonIgnoreProperties(value = { "characteristicAspectDtos", "id" })
     private HistoricalPeriodDto historicalPeriodDto;
 
     // Lege constructor
