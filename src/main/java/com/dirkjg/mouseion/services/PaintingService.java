@@ -40,6 +40,40 @@ public class PaintingService {
 
     }
 
+    // Filter-function
+    public List<PaintingDto> getFilteredPaintings(
+            Optional<String> title,
+            Optional<Long> historicalPeriodId,
+            Optional<Long> characteristicAspectId
+    ) {
+        return paintingRepository.findAll().stream()
+                // TITLE FILTER
+                .filter(p ->
+                        title.isEmpty() ||
+                                p.getTitle().toLowerCase().contains(title.get().toLowerCase())
+                )
+
+                // HISTORICAL PERIOD FILTER (via CharacteristicAspect)
+                .filter(p ->
+                        historicalPeriodId.isEmpty() ||
+                                (p.getCharacteristicAspect() != null &&
+                                        p.getCharacteristicAspect().getHistoricalPeriod() != null &&
+                                        p.getCharacteristicAspect().getHistoricalPeriod().getId()
+                                                .equals(historicalPeriodId.get()))
+                )
+
+                // CHARACTERISTIC ASPECT FILTER
+                .filter(p ->
+                        characteristicAspectId.isEmpty() ||
+                                (p.getCharacteristicAspect() != null &&
+                                        p.getCharacteristicAspect().getId()
+                                                .equals(characteristicAspectId.get()))
+                )
+
+                .map(this::transferToDto)
+                .toList();
+    }
+
     // CRUD-methodes
     public List<PaintingDto> getAllPaintings() {
         List<Painting> paintingList = paintingRepository.findAll();

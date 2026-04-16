@@ -1,29 +1,29 @@
 -- Voeg testschilderijen toe, let op: dit is testdata.
 
 -- PAINTINGS
-INSERT INTO painting (id, title, year, image) VALUES (1,'Sterrennacht', 1889, 'sterrennacht.jpg');
-INSERT INTO painting (id, title, year, image) VALUES (2,'Mona Lisa', 1503, 'monalisa.jpg');
-INSERT INTO painting (id, title, year, image) VALUES (3,'De Nachtwacht', 1642, 'nachtwacht.jpg');
+INSERT INTO painting (title, year, image) VALUES ('Sterrennacht', 1889, 'sterrennacht.jpg');
+INSERT INTO painting (title, year, image) VALUES ('Mona Lisa', 1503, 'monalisa.jpg');
+INSERT INTO painting (title, year, image) VALUES ('De Nachtwacht', 1642, 'nachtwacht.jpg');
 
 -- PAINTERS
-INSERT INTO painter (id, name, birth_year, death_year)
-VALUES (1, 'Leonardo da Vinci', 1452, 1519);
+INSERT INTO painter (name, birth_year, death_year)
+VALUES ('Leonardo da Vinci', 1452, 1519);
 
-INSERT INTO painter (id, name, birth_year, death_year)
-VALUES (2, 'Rembrandt van Rijn', 1606, 1669);
+INSERT INTO painter (name, birth_year, death_year)
+VALUES ('Rembrandt van Rijn', 1606, 1669);
 
-INSERT INTO painter (id, name, birth_year, death_year)
-VALUES (3, 'Vincent van Gogh', 1853, 1890);
+INSERT INTO painter (name, birth_year, death_year)
+VALUES ('Vincent van Gogh', 1853, 1890);
 
 -- EDUCATION CONTENT
-INSERT INTO education_content (id, learning_goal, question, answer, created_at)
-VALUES (1, 'Je kunt uitleggen waarom de Mona Lisa een typisch voorbeeld is van kunst uit de renaissance.', 'Waarom is de Mona Lisa een typisch renaissance kunstwerk?', 'Je ziet een uiterst realistische weergave van het gezicht en de handen van Mona Lisa.', NOW());
+INSERT INTO education_content (learning_goal, question, answer, created_at)
+VALUES ('Je kunt uitleggen waarom de Mona Lisa een typisch voorbeeld is van kunst uit de renaissance.', 'Waarom is de Mona Lisa een typisch renaissance kunstwerk?', 'Je ziet een uiterst realistische weergave van het gezicht en de handen van Mona Lisa.', NOW());
 
-INSERT INTO education_content (id, learning_goal, question, answer, created_at)
-VALUES (2, 'Je kunt uitleggen waarom de Nachtwacht een typisch voorbeeld is van kunst uit de Gouden Eeuw', 'Waarom is de Nachtwacht een typisch kunstwerk uit de Gouden Eeuw?', 'In het schilderij de Nachtwacht zie je de burgerij en schutterij.', NOW());
+INSERT INTO education_content (learning_goal, question, answer, created_at)
+VALUES ('Je kunt uitleggen waarom de Nachtwacht een typisch voorbeeld is van kunst uit de Gouden Eeuw', 'Waarom is de Nachtwacht een typisch kunstwerk uit de Gouden Eeuw?', 'In het schilderij de Nachtwacht zie je de burgerij en schutterij.', NOW());
 
-INSERT INTO education_content (id, learning_goal, question, answer, created_at)
-VALUES (3, 'Je kunt uitleggen waarom de Sterrennacht een typisch voorbeeld is van een kunstwerk uit de moderne tijd.', 'Waarom is de Sterrennacht een typisch modern kunstwerk?', 'Je ziet in het schilderij dat emotie belangrijker is dan realisme.', NOW());
+INSERT INTO education_content (learning_goal, question, answer, created_at)
+VALUES ('Je kunt uitleggen waarom de Sterrennacht een typisch voorbeeld is van een kunstwerk uit de moderne tijd.', 'Waarom is de Sterrennacht een typisch modern kunstwerk?', 'Je ziet in het schilderij dat emotie belangrijker is dan realisme.', NOW());
 
 -- HISTORICAL PERIODS
 INSERT INTO historical_period (id, period_number, name, first_year, last_year)
