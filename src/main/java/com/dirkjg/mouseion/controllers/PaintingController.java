@@ -44,18 +44,19 @@ public class PaintingController {
         this.fileService = fileService;
     }
 
-    // Get all paintings
+    // Get all paintings + filter-function
     @GetMapping("/paintings")
     public ResponseEntity<List<PaintingDto>> getAllPaintings(
-            @RequestParam(value = "title", required = false) Optional<String> title) {
+            @RequestParam(value = "title", required = false) Optional<String> title,
+            @RequestParam(value = "historicalPeriodId", required = false) Optional<Long> historicalPeriodId,
+            @RequestParam(value = "characteristicAspectId", required = false) Optional<Long> characteristicAspectId
+    ) {
 
-        List<PaintingDto> dtos;
-
-        if (title.isEmpty()){
-            dtos = paintingService.getAllPaintings();
-        } else {
-            dtos = paintingService.getAllPaintingsByTitle(title.get());
-        }
+        List<PaintingDto> dtos = paintingService.getFilteredPaintings(
+                title,
+                historicalPeriodId,
+                characteristicAspectId
+        );
 
         return ResponseEntity.ok().body(dtos);
 
