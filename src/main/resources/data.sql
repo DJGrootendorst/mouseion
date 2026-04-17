@@ -215,3 +215,5 @@ VALUES (48, 48, 'de eenwording van Europa', 10);
 
 INSERT INTO characteristic_aspect (id, number, description, historical_period_id)
 VALUES (49, 49, 'de ontwikkeling van pluriforme en multiculturele samenlevingen', 10);
+
+
