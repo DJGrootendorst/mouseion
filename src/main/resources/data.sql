@@ -216,4 +216,20 @@ VALUES (48, 48, 'de eenwording van Europa', 10);
 INSERT INTO characteristic_aspect (id, number, description, historical_period_id)
 VALUES (49, 49, 'de ontwikkeling van pluriforme en multiculturele samenlevingen', 10);
 
+INSERT INTO roles (rolename) VALUES
+('ROLE_STUDENT'),
+('ROLE_EDUCATOR'),
+('ROLE_ADMIN');
 
+-- TEST USERS
+INSERT INTO users (username, password)
+VALUES ('karel', 'appel');
+
+INSERT INTO users (username, password)
+VALUES ('pablo', 'picasso');
+
+INSERT INTO users_roles (users_username, roles_rolename)
+VALUES ('karel', 'ROLE_STUDENT');
+
+INSERT INTO users_roles (users_username, roles_rolename)
+VALUES ('pablo', 'ROLE_EDUCATOR');

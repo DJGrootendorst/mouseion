@@ -46,7 +46,7 @@ public class PainterController {
     }
 
     // Post een nieuwe painter
-    @PostMapping("/painter")
+    @PostMapping("/painters")
     public ResponseEntity<PainterDto> addPainter(@Valid @RequestBody PainterInputDto painterInputDto) {
 
         PainterDto dto = painterService.addPainter(painterInputDto);
