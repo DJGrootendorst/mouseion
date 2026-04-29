@@ -1,9 +1,5 @@
 package com.dirkjg.mouseion.models;
 
-// Verantwoordingsdocument: ik gebruik hier bewust drie specifieke imports
-// in plaats van de import jakarta.persistence.* omdat ik daarmee alleen
-// de classes importeer die ik daadwerkelijk nodig heb, waardoor IDE's en
-// andere ontwikkelaars meteen zien welke annotaties/types ik gebruik.
 import jakarta.persistence.*;
 
 @Entity
@@ -17,18 +13,20 @@ public class Painting {
 
     // variabele declaraties, de variabele Painter en CharacteristicAspects moet nog worden gemaakt, dat doe ik zodra ik de relaties ga leggen
     private String title;
+
+    @Column(name = "painting_year")
     private Integer year;
     // bij image wordt een url ingevuld
     private String image;
 
     // OneToOne-relatie naar EducationContent
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "education_content_id")
     private EducationContent educationContent;
 
     // ManyToOne-relatie naar Painter
     // Vanuit Painter naar Painting is dit dus een OneToMany-relatie
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "painter_id")
     private Painter painter;
     // Verantwoordingsdocument: de relatie tussen Painting en Painter is ManyToOne,
@@ -37,7 +35,7 @@ public class Painting {
 
     // ManyToOne-relatie naar CharacteristicAspect
     // Vanuit CharacteristicAspect naar Painting is dit dus een OneToMany-relatie
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "characteristic_aspect_id")
     private CharacteristicAspect characteristicAspect;
 
