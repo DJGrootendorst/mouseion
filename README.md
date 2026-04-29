@@ -34,6 +34,7 @@ De belangrijkste functionaliteiten van de API zijn:
 ## 3. Projectstructuur
 Het project is opgebouwd volgens een standaard Spring Boot architectuur:
 
+```text
 src/main/java
 ├── controllers
 ├── services
@@ -41,11 +42,12 @@ src/main/java
 ├── repositories
 ├── security
 ├── exceptions
-└── Dtos
+└── dtos
 
 src/test/java
 ├── integrationtests
 └── services
+```
 
 ## 4. Technieken en frameworks
 Dit project maakt gebruik van: 
