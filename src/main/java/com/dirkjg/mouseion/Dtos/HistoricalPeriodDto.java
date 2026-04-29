@@ -73,7 +73,8 @@ public class HistoricalPeriodDto {
         this.lastYear = lastYear;
     }
 
-    public void setCharacteristicAspectDtos(List<CharacteristicAspectDto> characteristicAspectDtos) {
+    public void setCharacteristicAspectDtos(
+            List<CharacteristicAspectDto> characteristicAspectDtos) {
         this.characteristicAspectDtos = characteristicAspectDtos;
     }
 }

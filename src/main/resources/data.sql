@@ -228,8 +228,14 @@ VALUES ('karel', 'appel');
 INSERT INTO users (username, password)
 VALUES ('pablo', 'picasso');
 
+INSERT INTO users (username, password)
+VALUES ('dirk', 'beheerder');
+
 INSERT INTO users_roles (users_username, roles_rolename)
 VALUES ('karel', 'ROLE_STUDENT');
 
 INSERT INTO users_roles (users_username, roles_rolename)
 VALUES ('pablo', 'ROLE_EDUCATOR');
+
+INSERT INTO users_roles (users_username, roles_rolename)
+VALUES ('dirk', 'ROLE_ADMIN');

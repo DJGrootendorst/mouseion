@@ -75,11 +75,6 @@ public class PainterController {
 
     }
 
-    // VERANTWOORDINGSDOCUMENT, TECHNISCHE KEUZE
-    // De PatchMapping voor het gedeeltelijk updaten van een Painter,
-    // is eigenlijk overbodig, de naam, geboortejaar en overlijdensjaar van de
-    // historische Painter staan namelijk vast en zullen niet snel gewijzigd hoeven te worden,
-    // tenzij er een fout door de gebruiker gemaakt is.
     @PatchMapping("/painters/{id}")
     public ResponseEntity<PainterDto> updatePartialPainter(
             @PathVariable Long id,

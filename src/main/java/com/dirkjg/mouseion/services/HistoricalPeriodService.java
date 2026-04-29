@@ -3,7 +3,6 @@ package com.dirkjg.mouseion.services;
 import com.dirkjg.mouseion.Dtos.HistoricalPeriodDto;
 import com.dirkjg.mouseion.Dtos.HistoricalPeriodInputDto;
 import com.dirkjg.mouseion.Dtos.CharacteristicAspectDto;
-import com.dirkjg.mouseion.Dtos.CharacteristicAspectInputDto;
 import com.dirkjg.mouseion.exceptions.RecordNotFoundException;
 import com.dirkjg.mouseion.models.HistoricalPeriod;
 import com.dirkjg.mouseion.models.CharacteristicAspect;

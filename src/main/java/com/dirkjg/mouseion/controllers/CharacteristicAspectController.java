@@ -11,9 +11,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-// Verantwoordingsdocument TECHNISCHE KEUZE 2: GEBRUIKERSROLLEN
-// Zie de verwijzing in HistoricalPeriodController.
-
 @RestController
 public class CharacteristicAspectController {
 

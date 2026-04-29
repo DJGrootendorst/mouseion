@@ -1,9 +1,5 @@
 package com.dirkjg.mouseion.models;
 
-// Verantwoordingsdocument: ik gebruik hier bewust drie specifieke imports
-// in plaats van de import jakarta.persistence.* omdat ik daarmee alleen
-// de classes importeer die ik daadwerkelijk nodig heb, waardoor IDE's en
-// andere ontwikkelaars meteen zien welke annotaties/types ik gebruik.
 import jakarta.persistence.*;
 
 @Entity
@@ -31,9 +27,6 @@ public class Painting {
     @ManyToOne
     @JoinColumn(name = "painter_id")
     private Painter painter;
-    // Verantwoordingsdocument: de relatie tussen Painting en Painter is ManyToOne,
-    // omdat Painting de foreign key bevat en dus de owner side is. Hierdoor blijft de
-    // database structuur simpel en consistent. Hetzelfde geldt voor Painting en CharacteristicAspect.
 
     // ManyToOne-relatie naar CharacteristicAspect
     // Vanuit CharacteristicAspect naar Painting is dit dus een OneToMany-relatie

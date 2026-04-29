@@ -11,24 +11,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-// Verantwoordingsdocument TECHNISCHE KEUZE 2: GEBRUIKERSROLLEN
-// In de applicatie zijn er twee rollen: Educator en Student.
-// Deze rollen bepalen wat een gebruiker mag doen. Voor Historische Periodes is ervoor gekozen
-// om restricties in te bouwen: geen Educator of Student kan nieuwe Historische Periodes toevoegen,
-// verwijderen, volledig updaten of gedeeltelijk updaten. De historische periodes zijn vastgelegd en
-// veranderen alleen bij uitzonderlijke omstandigheden, zoals nieuwe wetenschappelijke inzichten of
-// noodzakelijke technische aanpassingen. Alleen een beheerder (admin) krijgt de autoriteit om deze
-// wijzigingen door te voeren. Deze keuze wordt gerealiseerd via de User- en Authority-entiteiten.
-// Dit geldt ook voor CharacteristicAspectController. Er zijn namelijk 49 Kenmerkende Aspecten en
-// die zijn van tevoren vastgelegd.
-
-// Verantwoordingsdocument TECHNISCHE KEUZE 3: Enkelvoudige en meervoudige koppeling
-// In de applicatie is ervoor gekozen om zowel een enkelvoudige als een meervoudige assign-functionaliteit
-// te implementeren voor het koppelen van CharacteristicAspects aan een HistoricalPeriod.
-// De enkelvoudige assign maakt het mogelijk om één aspect per request te koppelen, wat overzichtelijk en
-// eenvoudig te testen is. De meervoudige assign maakt het mogelijk om meerdere aspecten in één keer te koppelen,
-// wat efficiënter. Door beide methoden te gebruiken is de applicatie flexibel en geschikt voor verschillende gebruikssituaties.
-
 @RestController
 public class HistoricalPeriodController {
 

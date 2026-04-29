@@ -13,23 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-// Verantwoording TECHNISCHE KEUZE:
-// De ManyToOne-relatie tussen CharacteristicAspect en HistoricalPeriod is gekozen omdat
-// elk Characteristic Aspect logisch binnen één Historical Period valt, terwijl een periode
-// meerdere kenmerkende aspecten kan hebben. Hierdoor vormt de periode de overkoepelende context
-// en de aspecten de gedetailleerde invulling.
-
-// De koppeling wordt afgehandeld in CharacteristicAspectService in plaats van in PaintingService,
-// omdat HistoricalPeriods en CharacteristicAspects de structurele ruggengraat van de applicatie vormen
-// en niet afhankelijk zijn van individuele bronnen zoals Paintings. Zodat schaalbaarheid naar ook andere
-// historische bronnen mogelijk wordt in de toekomst, zoals bijvoorbeeld HistoricalPictures of HistoricalVideos.
-
-// Voordelen van deze aanpak:
-// 1. Centralisatie en logica.
-// 2. Schaalbaarheid.
-// 3. Duidelijk eigenaarschap: de ManyToOne-relatie laat zien dat de periode de eigenaar is van de context
-//    van een aspect, waardoor de database structuur logisch en consistent blijft.
-
 @Service
 public class CharacteristicAspectService {
 

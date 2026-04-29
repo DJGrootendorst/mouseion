@@ -85,7 +85,6 @@ public class PaintingService {
         return paintingDtoList;
     }
 
-    // Is het in onderstaande methode nodig om alle schilderijen per titel op te vragen?
     public List<PaintingDto> getAllPaintingsByTitle(String title) {
         List<Painting> paintingList = paintingRepository.findAllPaintingsByTitleEqualsIgnoreCase(title);
         List<PaintingDto> paintingDtoList = new ArrayList<>();
