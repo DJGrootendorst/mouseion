@@ -72,7 +72,7 @@ public class PaintingController {
     }
 
     // Post een nieuwe painting
-    @PostMapping("/paintings")
+    @PostMapping("/painting")
     public ResponseEntity<PaintingDto> addPainting(@Valid @RequestBody PaintingInputDto paintingInputDto) {
 
         PaintingDto dto = paintingService.addPainting(paintingInputDto);
