@@ -1,9 +1,9 @@
 -- Voeg testschilderijen toe, let op: dit is testdata.
 
 -- PAINTINGS
-INSERT INTO painting (title, year, image) VALUES ('Sterrennacht', 1889, 'sterrennacht.jpg');
-INSERT INTO painting (title, year, image) VALUES ('Mona Lisa', 1503, 'monalisa.jpg');
-INSERT INTO painting (title, year, image) VALUES ('De Nachtwacht', 1642, 'nachtwacht.jpg');
+INSERT INTO painting (title, painting_year, image) VALUES ('Sterrennacht', 1889, 'sterrennacht.jpg');
+INSERT INTO painting (title, painting_year, image) VALUES ('Mona Lisa', 1503, 'monalisa.jpg');
+INSERT INTO painting (title, painting_year, image) VALUES ('De Nachtwacht', 1642, 'nachtwacht.jpg');
 
 -- PAINTERS
 INSERT INTO painter (name, birth_year, death_year)
